@@ -85,7 +85,7 @@
                 <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%">0/9</div>
             </div>
             <div id="question" class="big-text my-3"></div>
-            <input type="number" id="answerInput" class="form-control form-control-lg text-center" placeholder="Your answer">
+            <input type="number" id="answerInput" class="form-control form-control-lg text-center" placeholder="Your answer" onkeydown="handleEnter(event)">
             <button class="btn btn-primary btn-lg mt-3" onclick="checkAnswer()" style="font-size: 1.2em;" >Check Answer</button>
             <div id="feedback" class="my-3 big-text"></div>
             <button class="btn btn-secondary btn-lg mt-3" onclick="goHome()">Choose Column</button>
@@ -171,6 +171,14 @@
             document.getElementById('resultPage').classList.remove('hidden');
             document.getElementById('result').innerText = `${score}% (${correctAnswers} out of 9 correct)`;
         }
+
+
+        function handleEnter(event) {
+    if (event.key === "Enter") {
+        checkAnswer();
+        document.getElementById('answerInput').blur(); // Hide keyboard on mobile
+    }
+}
     </script>
 </body>
 </html>
