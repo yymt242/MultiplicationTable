@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Table Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .hidden { display: none; }
+        .hint-table { font-size: 1.2em; margin: 10px 0; }
+        .progress-bar { transition: width 0.5s ease; }
+        .big-text { font-size: 1.5em; }
+        .container { max-width: 500px; }
+        .btn-grid .btn { font-size: 1.3em; width: 100%; height: 100px; }
+
+        .btn.btn-primary {
+                background-color: black;
+                border-color: black;
+                color: white;
+                font-weight: bold;
+                font-size: 50px;
+                padding: 10px 20px;
+                border-radius: 5px;
+                transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn.btn-primary:hover {
+                background-color: red;
+                border-color: red;
+        }
+
+
+        #question.big-text.my-3 {
+                font-size: 3em;
+                margin: 20px 0;
+                font-weight: bold;
+                color: #333;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container text-center mt-5">
+        <!-- Home page to choose a column -->
+        <div id="homePage">
+            <h2 style="margin: 6px 0px 35px 0px;">Choose a Column to Review</h2>
+            <div class="btn-grid row">
+                <!-- Buttons for columns 2 to 9 arranged in a 2x4 grid -->
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(2)">2</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(3)">3</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(4)">4</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(5)">5</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(6)">6</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(7)">7</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(8)">8</button>
+                </div>
+                <div class="col-6 my-2">
+                    <button class="btn btn-primary" onclick="startReview(9)">9</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review page -->
+        <div id="reviewPage" class="hidden">
+            <h2>Multiplication Table Review</h2>
+            <h6> <i> Made for <b>Jamila</b> </i> ❤️ </h6>
+            <div class="my-3">
+                <button class="btn btn-secondary" onclick="toggleHint()">Show/Hide Hint</button>
+                <div id="hint" class="hidden hint-table"></div>
+            </div>
+            <div class="progress my-3">
+                <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%">0/9</div>
+            </div>
+            <div id="question" class="big-text my-3"></div>
+            <input type="number" id="answerInput" class="form-control form-control-lg text-center" placeholder="Your answer">
+            <button class="btn btn-primary btn-lg mt-3" onclick="checkAnswer()" style="font-size: 1.2em;" >Check Answer</button>
+            <div id="feedback" class="my-3 big-text"></div>
+            <button class="btn btn-secondary btn-lg mt-3" onclick="goHome()">Choose Column</button>
+        </div>
+
+        <!-- Result page -->
+        <div id="resultPage" class="hidden">
+            <h2>Review Complete 😆😆 </h2>
+            <p id="result" class="big-text"></p>
+            <button class="btn btn-primary btn-lg" onclick="goHome()" style="font-size: 1.2em">Choose Column</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedColumn, correctAnswers = 0, questionCount = 0;
+        let questions;
+
+        function startReview(column) {
+            selectedColumn = column;
+            questionCount = 0;
+            correctAnswers = 0;
+            questions = Array.from({ length: 9 }, (_, i) => i + 1); // Initialize 1 to 9 for unique questions
+
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('reviewPage').classList.remove('hidden');
+            showHint();
+            showNextQuestion();
+        }
+
+        function goHome() {
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('reviewPage').classList.add('hidden');
+            document.getElementById('resultPage').classList.add('hidden');
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressBar').innerText = '0/9';
+        }
+
+        function showHint() {
+            const hintDiv = document.getElementById('hint');
+            hintDiv.innerHTML = Array.from({ length: 9 }, (_, i) => `${selectedColumn} x ${i + 1} = ${selectedColumn * (i + 1)}`).join('<br>');
+        }
+
+        function toggleHint() {
+            const hintDiv = document.getElementById('hint');
+            hintDiv.classList.toggle('hidden');
+        }
+
+        function showNextQuestion() {
+            if (questionCount >= 9) return showResult();
+
+            const index = Math.floor(Math.random() * questions.length);
+            const multiplier = questions.splice(index, 1)[0]; // Get a unique multiplier and remove from array
+
+            document.getElementById('question').innerText = `${selectedColumn} x ${multiplier} = ?`;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('feedback').innerText = '';
+        }
+
+        function checkAnswer() {
+            const [_, multiplier] = document.getElementById('question').innerText.split(' x ');
+            const correctAnswer = selectedColumn * parseInt(multiplier);
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+
+            if (userAnswer === correctAnswer) {
+                correctAnswers++;
+                document.getElementById('feedback').innerText = 'Correct!';
+                document.getElementById('feedback').style.color = 'green';
+            } else {
+                document.getElementById('feedback').innerText = `Incorrect! The correct answer was ${correctAnswer}`;
+                document.getElementById('feedback').style.color = 'red';
+            }
+
+            questionCount++;
+            document.getElementById('progressBar').style.width = `${(questionCount / 9) * 100}%`;
+            document.getElementById('progressBar').innerText = `${questionCount}/9`;
+
+            setTimeout(showNextQuestion, 1000);
+        }
+
+        function showResult() {
+            const score = Math.round((correctAnswers / 9) * 100);
+            document.getElementById('reviewPage').classList.add('hidden');
+            document.getElementById('resultPage').classList.remove('hidden');
+            document.getElementById('result').innerText = `${score}% (${correctAnswers} out of 9 correct)`;
+        }
+    </script>
+</body>
+</html>
